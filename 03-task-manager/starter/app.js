@@ -1,3 +1,4 @@
+//////////////////////////////////////////////////////////
 const express = require("express");
 const app = express();
 
@@ -9,21 +10,29 @@ const connectDB = require("./db/connect");
 // Call env file
 require("dotenv").config();
 
+// module not-found
+const notFound = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
+
 //////////////////////////////////////////////////////////
-//middleware
+// Setup for static file ==>> HTML
+app.use(express.static("./public"));
+
+//////////////////////////////////////////////////////////
+// middleware
 // Declare this to read req.body
 app.use(express.json());
 
 //////////////////////////////////////////////////////////
-// routes
-app.get("/hello", (req, res) => {
-    res.send("Task Manager App");
-});
-
 app.use("/api/v1/tasks", tasks);
 
 //////////////////////////////////////////////////////////
-const port = 3000;
+app.use(notFound);
+
+app.use(errorHandlerMiddleware);
+//////////////////////////////////////////////////////////
+// const port = 3000;
+const port = process.env.PORT || 3000;
 
 const start = async () => {
     try {
